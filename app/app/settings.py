@@ -95,6 +95,7 @@ INSTALLED_APPS = [
     'gas',
     'git',
     'healthcheck.apps.HealthcheckConfig',
+    'job',
     'legacy',
     'chartit',
     'email_obfuscator',

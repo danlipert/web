@@ -40,6 +40,7 @@ import external_bounties.views
 import faucet.views
 import gitcoinbot.views
 import healthcheck.views
+import job.views
 import kudos.views
 import linkshortener.views
 import marketing.views
@@ -101,6 +102,9 @@ urlpatterns = [
     # grant views
     path('grants/', include('grants.urls', namespace='grants')),
 
+    # job views
+    path('jobs/', include('job.urls', namespace='jobs')),
+    
     # dashboard views
 
     # Dummy offchain index

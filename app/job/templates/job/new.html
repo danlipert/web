@@ -1,0 +1,147 @@
+{% comment %}
+  Copyright (C) 2018 Gitcoin Core
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% load i18n static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  {% include 'shared/head.html' %}
+  {% include 'shared/cards.html' %}
+  <meta name="title" content="Create Job Posting | Gitcoin">
+  <meta name="description" content="Instructions for creating a job posting to Gitcoin.">
+  <link rel="stylesheet" href={% static "v2/css/submit_bounty.css" %}>
+</head>
+
+<body class="interior {{active}} g-font-muli" style="background-color: #FFFFFF;">
+  {% include 'shared/tag_manager_2.html' %}
+  <div class="container-fluid header dash">
+    {% include 'shared/top_nav.html' with class='d-md-flex' %}
+    {% include 'shared/nav.html' %}
+  </div>
+  <div class="container-fluid submit_bounty_content">
+    <div class="row no-gutters metamask-banner">
+      <div class="col-12">
+        {% include 'shared/no_metamask_error.html' %}
+        {% include 'shared/zero_balance_error.html' %}
+        {% include 'shared/unlock_metamask.html' %}
+        {% include 'shared/connect_metamask.html' %}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12 col-lg-12">
+        <div id="form_container">
+          <div class="row d-flex justify-content-center my-5">
+            <div id="robot_error" class="hidden">
+              <img src="{% static "v2/images/prime.png" %}">
+            </div>
+            <div id="primary_form" class="col-lg-7 col-sm-12">
+              <h1 class="text-center title">{% trans "Create a Job Posting" %}</h1>
+              <form id="submitJob" method="post" action="/jobs/new/" class="submit_bounty_form px-5 pt-5">{% csrf_token %}
+                <div id="about-section" class="pt-2">
+                  <div id="job-details" class="mt-4">
+                    <label class="form__label mb-0 mt-3" for="title">{% trans "Job Title" %}</label>
+                    <input name='title' id="title" class="form__input pb-2 pt-2" type="text" required/>
+                    <label class="form__label mb-0 mt-3 w-100" for="title">{% trans "Job Type" %}</label>
+                    <div class="row ml-0 mr-0 mt-2">
+                      <div class="form__radio col-sm-6">
+                        <input class="radio-inline" name='full_time' id="full-time" type="radio" value="Full Time" checked>
+                        <label class="form__label mt-0 mb-0 pl-2 pb-1" for="full-time">{% trans "FULL-TIME" %}</label>
+                      </div>
+                      <div class="form__radio col-sm-6">
+                        <input class="radio-inline"  name='full_time' id="part-time" type="radio" value="Part Time">
+                        <label class="form__label mt-0 mb-0 pl-2 pb-1" for="part-time">{% trans "PART-TIME" %}</label>
+                      </div>
+                    </div>
+                    <div class="row ml-0 mr-0 mt-2">
+                      <div class="form__radio col-sm-6 pl-0">
+                        <input class="checkbox-inline" name='internship' id="internship" type="checkbox" value="Internship">
+                        <label class="form__label mt-0 mb-0 pl-4 pb-1" for="internship">{% trans "INTERNSHIP" %}</label>
+                      </div>
+                      <div class="form__radio col-sm-6">
+                        <input class="checkbox-inline"  name='contractor' id="contractor" type="checkbox" value="Contractor">
+                        <label class="form__label mt-0 mb-0 pl-2 pb-1" for="contractor">{% trans "CONTRACTOR" %}</label>
+                      </div>
+                    </div>
+                    <label class="form__label mb-0 mt-4 w-100" for="location">{% trans "Location" %}</label>
+                    <input name='location' id="location" class="form__input pb-2 pt-2" type="text" required/>
+                    <label class="form__label mb-0 mt-4 w-100" for="annual_pay">{% trans "Annual Pay" %}</label>
+                    <input name='annual_pay' id="annual_pay" class="form__input pb-2 pt-2" type="text" required/>
+                    <label class="form__label mb-0 mt-3 w-100" for="skills">{% trans "Skills" %}</label>
+                    <input name='skills' id="skills" class="form__input pb-2 pt-2" type="text" placeholder="EX: Python, Solidity, Web3" required/>
+                    <label class="form__label mb-0 mt-3" for="company">{% trans "Company" %}</label>
+                    <input name='company' id="company" class="form__input  pb-2 pt-2" type="text" required/>
+                    <label class="form__label mb-0 mt-4 w-100" for="apply_location">{% trans "Apply Location" %}</label>
+                    <input name='apply_location' id="apply_location" class="form__input pb-2 pt-2" type="text" required/>
+                    <label class="form__label mb-0 mt-3" for="github_profile">Github {% trans "Profile" %}</label>
+                    <input name='github_profile' id="github_profile" class="form__input  pb-2 pt-2" type="text" value="{{ github_profile }}" required/>
+                    <label class="form__label mt-3" for="description">{% trans "Description" %}</label>
+                    <textarea name="description" class="form__input" id="description"></textarea>
+                    <input type="hidden" name="paid_txid" id="paid_txid"/>
+                  </div>
+                  <div id="issue-details-edit" class="mt-2">
+                    <label class="form__label" for="keywords">{% trans "Keywords" %}</label>
+                    <input name='keywords' id='keywords' class="form__input" type="text" value="{{keywords}}" />
+                  </div>
+                  <hr class="mt-4">
+                </div>
+                <div class="form__footer form__footer--right pb-5 text-center">
+                  <button class="button button--primary btn-block js-submit submit-job-button" onclick="submitJobETH(); return false;">Submit</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% include 'shared/bottom_notification.html' %}
+  {% include 'shared/analytics.html' %}
+  {% include 'shared/footer_scripts.html' %}
+  {% include 'shared/footer.html' %}
+  {% include 'shared/messages.html' %}
+</body>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+
+<script>
+function submitJobETH() {
+  var send = web3.eth.sendTransaction(
+    {
+      to: "0x00De4B13153673BCAE2616b67bf822500d325Fc3",
+      value: web3.toWei(0.1, "ether")
+    },
+    function(err, transactionHash) {
+      if (!err) {
+        $("#paid_txid").val(transactionHash);
+        $('#submitJob').submit();
+      }
+  });
+};
+</script>
+
+<script>
+    var simplemde = new SimpleMDE({
+        element: document.getElementById("description"),
+        status: [],
+        toolbar: ["bold", "italic", "strikethrough", "ordered-list", "unordered-list", "link", "code"]
+    });
+</script>
+
+{% include 'shared/current_profile.html' %}
+
+</html>

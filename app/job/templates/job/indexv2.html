@@ -1,0 +1,182 @@
+{% comment %}
+    Copyright (C) 2017 Gitcoin Core
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+{% endcomment %}
+{% load i18n static add_filters %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    {% include 'shared/head.html' %}
+    {% include 'shared/cards.html' %}
+    <meta name="description" content="The Gitcoin platform connects developers with jobs. Find the greatest developers in the world with Gitcoin!">
+    <link rel="stylesheet" href={% static "v2/css/dashboard.css" %}>
+    <link rel="stylesheet" href={% static "v2/css/tag.css" %}>
+    <style>
+      .striped-divs a:nth-of-type(even) {
+        background: #F2F6F9;
+      }
+    </style>
+  </head>
+
+  <body class="interior {{active}} g-font-muli">
+    {% include 'shared/tag_manager_2.html' %}
+    <div class="container-fluid header dash">
+      {% include 'shared/top_nav.html' with class='d-md-flex' %}
+      {% include 'shared/nav.html' %}
+    </div>
+    {% include 'dashboard/ftux.html' %}
+    <div id="dashboard-content" class="row no-gutter">
+      <div class="col-12 col-lg-3 col-xl-2" id="sidebar_container" style="background: #F2F6F9;">
+        {% include 'job/sidebar_search.html' %}
+      </div>
+      <div class="col-12 col-lg-9 col-xl-9 body">
+        <div class="container-fluid p-2 ml-4 striped-divs" id="bounties">
+          <h5>{{ jobs_count }} job listings</h5>
+
+          {% for job in jobs %}
+          <a class="row result bounty_row" href="{% url 'job:details' job.id job.slug %}">
+            <div class="avatar-container col-1 justify-content-center hide_min_viewport">
+              <img src='/dynamic/avatar/{{ job.owner_profile.handle }}/' width=70% class='avatar'>
+            </div>
+            <div class="col-12 col-md-11 d-flex flex-column">
+              <div class="bounty-detail">
+                <div class="row ml-0">
+                  <div class="col-sm-8">
+                    <div class="title font-subheader">
+                      {{ job.title }}
+                    </div>
+                  </div>
+                  <div class="col-sm-4">
+                    <div class="title font-subheader ml-auto">
+                      {% if job.contractor == True %}
+                        {% trans "Contractor" %}
+                      {% elif job.internship == True %}
+                        {% trans "Internship" %}
+                      {% elif job.full_time == True %}
+                        {% trans "Full Time" %}
+                      {% else %}
+                        {% trans "Part Time" %}
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+                <div class="row ml-0">
+                  <div class="bounty-summary col-sm-8">
+                    <div class="info font-caption">
+                      {{ job.company }}
+                    </div>
+                  </div>
+                  <div class="bounty-summary col-sm-4">
+                    <div class="info font-caption ml-0">
+                      {{ job.location }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </a>
+          {% endfor %}
+          </div>
+          {% if jobs_count > page_limit %}
+          <div class="pagination pl-3">
+            <span class="step-links">
+              {% if jobs.has_previous %}
+                <a href="?{% query_transform request page=1 %}">&laquo; first</a>
+                <a href="?{% query_transform request page=jobs.previous_page_number %}">previous</a>
+              {% endif %}
+              <span class="current">
+                Page {{ jobs.number }} of {{ jobs.paginator.num_pages }}.
+              </span>
+              {% if jobs.has_next %}
+                <a href="?{% query_transform request page=jobs.next_page_number %}">next</a>
+                <a href="?{% query_transform request page=jobs.paginator.num_pages %}">last &raquo;</a>
+              {% endif %}
+            </span>
+            {% endif %}
+        </div>
+      </div>
+    </div>
+
+    {% include 'shared/analytics.html' %}
+    {% include 'shared/footer_scripts.html' %}
+    {% include 'shared/footer.html' %}
+    {% include 'shared/messages.html' %}
+
+    <script>
+      $('input[type="radio"]').on('click change', function(e) {
+        $('#job-filter').submit();
+      });
+      $('input[type="checkbox"]').on('click change', function(e) {
+        $('#job-filter').submit();
+      });
+
+      function addTag(tag) {
+        $('.filter-tags').append('<a class="filter-tag keywords"><span>' + value + '</span>' +
+          '<i class="fas fa-times" onclick="removeFilter(\'keywords\', \'' + value + '\')"></i></a>');
+      };
+
+      $('#search').on('input', function() {
+        if ($(this).val()) {
+          $('.close-icon').show();
+        } else {
+          $('.close-icon').hide();
+        }
+      })
+      // don't navigate away from the field on tab when selecting an item
+      .on('keydown', function(event) {
+        if (event.keyCode === $.ui.keyCode.TAB && $(this).autocomplete('instance').menu.active) {
+          event.preventDefault();
+        } else if (event.keyCode === $.ui.keyCode.ENTER) {
+          event.preventDefault();
+          $('#job-filter').submit();
+        }
+      })
+      .autocomplete({
+        minLength: 0,
+        source: function(request, response) {
+          // delegate back to autocomplete, but extract the last term
+          // response($.ui.autocomplete.filter(document.keywords, extractLast(request.term)));
+        },
+        focus: function() {
+          // prevent value inserted on focus
+          return false;
+        },
+        select: function(event, ui) {
+          var terms = split(this.value);
+
+          $('.close-icon').hide();
+
+          // remove the current input
+          terms.pop();
+
+          // add the selected item
+          terms.push(ui.item.value);
+
+          // add placeholder to get the comma-and-space at the end
+          terms.push('');
+
+          this.value = '';
+
+          addTag(ui.item.value);
+
+          return false;
+        }
+      });
+    </script>
+  </body>
+</html>

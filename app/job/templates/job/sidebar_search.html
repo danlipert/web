@@ -1,0 +1,127 @@
+{% comment %}
+    Copyright (C) 2018 Gitcoin Core
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% load i18n static %}
+<link rel="stylesheet" href={% static "v2/css/sidebar_search.css" %}>
+<div class="sidebar_search font-body">
+  <form method="get" id="job-filter">
+    <div class="search font-caption mb-4">
+      <div class="search-area col-12">
+        <input name="search" class="form__input form__input_lg" id="search" type="text" value="{{ search }}"/>
+        <a id="new_search" href="javascript:document.getElementById('job-filter').submit();">
+          <i class="fas fa-search"></i>
+        </a>
+      </div>
+      <div class="col-12">
+        <div class="filter-tags"></div> <!-- Populate the filters -->
+      </div>
+    </div>
+    <div class="col">
+      <div class="col-12 subheading">
+        {% trans "Date Posted" %}
+      </div>
+      <div class="col-12 options">
+        <div class="form__radio option">
+          <input name="date_posted" id="24_hours" type="radio" value="24_hours" val-ui='24 hours' {% if date_posted == "24_hours" %}checked{% endif %}/>
+          <label class="filter-label" for=24_hours>24 {% trans "hours" %}</label>
+        </div>
+        <div class="form__radio option">
+          <input name="date_posted" id="3_days" type="radio" value="3_days" val-ui='3 days' {% if date_posted == "3_days" %}checked{% endif %}/>
+          <label class="filter-label" for=3_days>3 {% trans "days" %}</label>
+        </div>
+        <div class="form__radio option">
+          <input name="date_posted" id="7_days" type="radio" value="7_days" val-ui='7 days' {% if date_posted == "7_days" %}checked{% endif %}/>
+          <label class="filter-label" for=7_days>7 {% trans "days" %}</label>
+        </div>
+        <div class="form__radio option">
+          <input name="date_posted" id="30_days" type="radio" value="30_days" val-ui='30 days' {% if date_posted == "30_days" %}checked{% endif %}/>
+          <label class="filter-label" for=30_days>30 {% trans "days" %}</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="col-12 subheading accordion">
+        {% trans "Employment Type" %}
+      </div>
+      <div class="panel">
+        <div class="col-12 options">
+          <div class="checkbox_container">
+            <input name="full_time" id="full_time" type="checkbox" value="1" val-ui='Full Time' {% if full_time %}checked{% endif %}/>
+            <span class="checkbox"></span>
+            <div class="filter-label">
+              <label for=full_time>{% trans "Full Time" %}</label>
+            </div>
+          </div>
+          <div class="checkbox_container">
+            <input name="part_time" id="part_time" type="checkbox" value="1" val-ui='Part Time' {% if part_time %}checked{% endif %}/>
+            <span class="checkbox"></span>
+            <div class="filter-label">
+              <label for=part_time>{% trans "Part Time" %}</label>
+            </div>
+          </div>
+          <div class="checkbox_container">
+            <input name="contractor" id="contractor" type="checkbox" value="1" val-ui='Contractor' {% if contractor %}checked{% endif %}/>
+            <span class="checkbox"></span>
+            <div class="filter-label">
+              <label for=contractor>{% trans "Contractor" %}</label>
+            </div>
+          </div>
+          <div class="checkbox_container mb-2">
+            <input name="internship" id="internship" type="checkbox" value="1" val-ui='Intern' {% if internship %}checked{% endif %}/>
+            <span class="checkbox"></span>
+            <div class="filter-label">
+              <label for=internship>{% trans "Intern" %}</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="col-12 subheading accordion">
+        {% trans "Annual Pay" %}
+      </div>
+      <div class="panel">
+          <div class="col-12 options">
+            <div class="form__radio option">
+              <input name="annual_pay" id="any_annual_pay" type="radio" value="Any" val-ui='any_annual_pay' {% if annual_pay == "Any" %}checked{% endif %}/>
+              <label class="filter-label" for=any_annual_pay>Any</label>
+            </div>
+            <div class="form__radio option">
+              <input name="annual_pay" id="50_annual_pay" type="radio" value="50000" val-ui='50_annual_pay' {% if annual_pay == "50000" %}checked{% endif %}/>
+              <label class="filter-label" for=50_annual_pay>$50,000+</label>
+            </div>
+            <div class="form__radio option">
+              <input name="annual_pay" id="75_annual_pay" type="radio" value="75000" val-ui='75_annual_pay' {% if annual_pay == "75000" %}checked{% endif %}/>
+              <label class="filter-label" for=75_annual_pay>$75,000+</label>
+            </div>
+            <div class="form__radio option">
+              <input name="annual_pay" id="100_annual_pay" type="radio" value="100000" val-ui='100_annual_pay' {% if annual_pay == "100000" %}checked{% endif %}/>
+              <label class="filter-label" for=100_annual_pay>$100,000+</label>
+            </div>
+            <div class="form__radio option">
+              <input name="annual_pay" id="125_annual_pay" type="radio" value="125000" val-ui='125_annual_pay' {% if annual_pay == "125000" %}checked{% endif %}/>
+              <label class="filter-label" for=125_annual_pay>$125,000+</label>
+            </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <a href="{% url 'job:jobs' %}"><p id="clear">{% trans "Reset Filters" %}</p></a>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,133 @@
+{% load i18n static %}
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    {% include 'shared/head.html' %}
+    {% include 'shared/cards_pic.html' %}
+    <meta name="title" content="{{ title }}">
+    <meta name="description" content="{{ description }}">
+    <link rel="stylesheet" href="{% static "v2/css/bounty.css" %}">
+    <link rel="stylesheet" href="{% static "v2/css/tag.css" %}">
+  </head>
+
+  <body class="interior {{active}} g-font-muli">
+    {% include 'shared/tag_manager_2.html' %}
+    <div class="container-fluid header dash">
+      {% include 'shared/top_nav.html' with class='d-md-flex' %}
+      {% include 'shared/nav.html' %}
+    </div>
+    <div class="row no-gutter">
+      <div class="col-12 col-lg-2 left-rails text-center" style="background: #F2F6F9;">
+        <div class="explorer font-body">
+          <a href="{% url 'job:jobs' %}"><i class="fas fa-chevron-left"></i> {% trans "Back to Job Board" %}</a>
+        </div>
+      </div>
+
+      <div class="col-12 offset-md-1 col-md-10 offset-lg-1 col-lg-8 body">
+        <div class="col-12 " id="job_details">
+          <div class="container">
+            <div class="row font-body">
+              <div class="col-12">
+                <div class="col-12">
+                  <h4 id="title" class="font-title">{{ title }}</h4>
+                </div>
+                <div class="col-12 mb-2">
+                  <span class="bounty-info-heading">
+                    {% if job.contractor == True %}
+                      {% trans "Contractor" %}
+                    {% elif job.internship == True %}
+                      {% trans "Internship" %}
+                    {% elif job.full_time == True %}
+                      {% trans "Full Time" %}
+                    {% else %}
+                      {% trans "Part Time" %}
+                    {% endif %}
+                  </span>
+                  <span class="bounty-info-text ml-2">
+                    {{ job.location }}
+                  </span>
+                </div>
+                <div class="row ml-0">
+                  <div class="col-sm-8 bounty-info">
+                    <div>
+                      <span class="bounty-info-heading">{% trans "Company" %}</span>
+                      <span class="bounty-info-text">{{ company }}</span>
+                    </div>
+                    <div>
+                      <span class="bounty-info-heading">{% trans "Experience" %}</span>
+                      <span class="bounty-info-text">{% for skill in experience %}{{ skill }} {% endfor %}</span>
+                    </div>
+                  </div>
+                  <div class="col-sm-4 bounty-info">
+                    <div class="ml-auto">
+                      <span class="bounty-info-heading">{% trans "Posted" %}</span>
+                      <span class="bounty-info-text">{{ created|timesince }} {% trans "ago" %}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="container">
+            <div class="row">
+              <div class="col-12 bounty-actions">
+                <div class="col-12 mb-3">
+                  <a href="{{ job.apply_location }}"><button class="button button--primary" role="button">{% trans "Apply for Role" %}</button></a>
+                  <a href="http://www.github.com/{{ owner_profile_handle }}"><button class="button button--primary-o" role="button">Github {% trans "profile" %}</button></a>
+                </div>
+              </div>
+              <div class="col-12">
+                <h5 class="bounty-heading" id="description">{% trans "Description" %}</h5>
+                <div class="bounty-text" id="job_description" style="display:none;">{{ description }}</div>
+              </div>
+              <div class="col-12">
+                <div id="issue_keywords"></div>
+              </div>
+              <div class="col-12"></div>
+              <div class="col-12">
+                <div class="row box">
+                  <div class="col-1 col-md-1 activity-avatar">
+                    <div id="issuer_avatar_url"><img class="avatar" width=70% src="/dynamic/avatar/{{ owner_profile_handle }}/"/>
+                    </div>
+                  </div>
+                  <div class="col-11 col-md-11">
+                    <div id="bounty_owner_github_username" class="font-subheader">{{ owner_profile_handle }}</div>
+                    <div>
+                      <span class="bounty-subheading" id="bounty_owner_email_label">{% trans "Email" %}</span>
+                      <span class="bounty-text" id="bounty_owner_email">{{ owner_profile_email }}</span>
+                    </div>
+                    <div>
+                      <span class="bounty-subheading" id="bounty_owner_profile_label">Gitcoin {% trans "Profile" %}</span>
+                      <span class="bounty-text" id="bounty_owner_profile">@{{ owner_profile_handle }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% include 'shared/bottom_notification.html' %}
+    {% include 'shared/analytics.html' %}
+    {% include 'shared/footer_scripts.html' %}
+    {% include 'shared/footer.html' %}
+  </body>
+
+  {% include 'shared/current_profile.html' %}
+
+  <script>
+    $(function() {
+        var converter = new showdown.Converter({
+          simplifiedAutoLink: true
+        });
+
+        description_html = converter.makeHtml($("#job_description").text());
+        $("#job_description").replaceWith(description_html);
+        $("#job_description").show();
+    });
+  </script>
+
+  <script src="{% static "v2/js/showdown.js" %}"></script>
+</html>
