@@ -13,7 +13,7 @@ def job_alert(job):
         subject = _("New Job Posting Alert")
         body_str = _("A new job has been posted and is awaiting approval")
         body = f"{body_str} {job.company}:"\
-            f"{settings.BASE_URL}_administrationjob/job/{job.pk}/change/"
+            f"{settings.BASE_URL}"[:-1] + f"{job.admin_url}"
         send_mail(
             from_email,
             to_email,
@@ -34,7 +34,7 @@ def job_active_alert(job):
         subject = _("Your Gitcoin Job Posting is now active")
         body_str = _("Congratulations! Your Job Posting is now available on Gitcoin!\n")
         body = f"{body_str} {job.company}:"\
-            f"{settings.BASE_URL}job/{job.pk}/{job.slug}/"
+            f"{settings.BASE_URL}"[:-1] + f"{job.admin_url}"
         send_mail(
             from_email,
             to_email,

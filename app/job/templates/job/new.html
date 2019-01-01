@@ -79,7 +79,7 @@
                     <label class="form__label mb-0 mt-4 w-100" for="location">{% trans "Location" %}</label>
                     <input name='location' id="location" class="form__input pb-2 pt-2" type="text" required/>
                     <label class="form__label mb-0 mt-4 w-100" for="annual_pay">{% trans "Annual Pay" %}</label>
-                    <input name='annual_pay' id="annual_pay" class="form__input pb-2 pt-2" type="text" required/>
+                    <input name='annual_pay' id="annual_pay" class="form__input pb-2 pt-2" type="number" required/>
                     <label class="form__label mb-0 mt-3 w-100" for="skills">{% trans "Skills" %}</label>
                     <input name='skills' id="skills" class="form__input pb-2 pt-2" type="text" placeholder="EX: Python, Solidity, Web3" required/>
                     <label class="form__label mb-0 mt-3" for="company">{% trans "Company" %}</label>
@@ -99,7 +99,7 @@
                   <hr class="mt-4">
                 </div>
                 <div class="form__footer form__footer--right pb-5 text-center">
-                  <button class="button button--primary btn-block js-submit submit-job-button" onclick="submitJobETH(); return false;">Submit</button>
+                  <button class="button button--primary btn-block js-submit submit-job-button" onclick="submitJobETH('{{ job_posting_eth_address }}', {{ job_posting_eth_fee }}); return false;">Submit</button>
                 </div>
               </form>
             </div>
@@ -115,32 +115,22 @@
   {% include 'shared/messages.html' %}
 </body>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
-<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+<link rel="stylesheet" href={% static "job/css/simplemde.min.css" %}/>
+<script src={% static "job/js/simplemde.min.js" %}></script>
+<link rel="stylesheet" href={% static "v2/css/jquery-ui.css" %}/>
+<script src={% static "v2/js/jquery-ui.js" %}></script>
+
+<script src={% static "job/js/job_new.js" %}></script>
 
 <script>
-function submitJobETH() {
-  var send = web3.eth.sendTransaction(
-    {
-      to: "0x00De4B13153673BCAE2616b67bf822500d325Fc3",
-      value: web3.toWei(0.1, "ether")
-    },
-    function(err, transactionHash) {
-      if (!err) {
-        $("#paid_txid").val(transactionHash);
-        $('#submitJob').submit();
-      }
-  });
-};
+{% autoescape off %}
+$(function() {
+  configureAutocomplete({{ available_skills }});
+});
+{% endautoescape %}
 </script>
 
-<script>
-    var simplemde = new SimpleMDE({
-        element: document.getElementById("description"),
-        status: [],
-        toolbar: ["bold", "italic", "strikethrough", "ordered-list", "unordered-list", "link", "code"]
-    });
-</script>
+
 
 {% include 'shared/current_profile.html' %}
 

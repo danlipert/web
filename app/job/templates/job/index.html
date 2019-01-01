@@ -45,11 +45,24 @@
         {% include 'job/sidebar_search.html' %}
       </div>
       <div class="col-12 col-lg-9 col-xl-9 body">
-        <div class="container-fluid p-2 ml-4 striped-divs" id="bounties">
-          <h5>{{ jobs_count }} job listings</h5>
-
+        {% if jobs_count == 0 %}
+        <div class="nonefound ml-0">
+            <img style="max-width:250px;" src="{% static "v2/images/shrug_bot.png" %}">
+            <h3>{% trans "No results found." %}</h3>
+            <p>{% trans "Please try another query" %}</p>
+        </div>
+        {% else %}
+        <div class="container-fluid p-2 pt-5 ml-4 striped-divs" id="bounties">
+          <div class="results-count row border-bottom mr-4">
+            <div class="col-sm-8">
+              <h5>{% trans "All Jobs" %}</h5>
+            </div>
+            <div class="col-sm-4 text-md-right">
+              {{ jobs_count }} {% trans "Active job listings" %}
+            </div>
+          </div>
           {% for job in jobs %}
-          <a class="row result bounty_row" href="{% url 'job:details' job.id job.slug %}">
+          <a class="row result bounty_row mr-4" href="{% url 'job:details' job.id job.slug %}">
             <div class="avatar-container col-1 justify-content-center hide_min_viewport">
               <img src='/dynamic/avatar/{{ job.owner_profile.handle }}/' width=70% class='avatar'>
             </div>
@@ -62,7 +75,7 @@
                     </div>
                   </div>
                   <div class="col-sm-4">
-                    <div class="title font-subheader ml-auto">
+                    <div class="title font-subheader ml-auto text-md-right mr-2">
                       {% if job.contractor == True %}
                         {% trans "Contractor" %}
                       {% elif job.internship == True %}
@@ -82,7 +95,7 @@
                     </div>
                   </div>
                   <div class="bounty-summary col-sm-4">
-                    <div class="info font-caption ml-0">
+                    <div class="info font-caption ml-md-auto text-md-right mr-2">
                       {{ job.location }}
                     </div>
                   </div>
@@ -109,6 +122,7 @@
             </span>
             {% endif %}
         </div>
+      {% endif %}
       </div>
     </div>
 
@@ -117,66 +131,6 @@
     {% include 'shared/footer.html' %}
     {% include 'shared/messages.html' %}
 
-    <script>
-      $('input[type="radio"]').on('click change', function(e) {
-        $('#job-filter').submit();
-      });
-      $('input[type="checkbox"]').on('click change', function(e) {
-        $('#job-filter').submit();
-      });
-
-      function addTag(tag) {
-        $('.filter-tags').append('<a class="filter-tag keywords"><span>' + value + '</span>' +
-          '<i class="fas fa-times" onclick="removeFilter(\'keywords\', \'' + value + '\')"></i></a>');
-      };
-
-      $('#search').on('input', function() {
-        if ($(this).val()) {
-          $('.close-icon').show();
-        } else {
-          $('.close-icon').hide();
-        }
-      })
-      // don't navigate away from the field on tab when selecting an item
-      .on('keydown', function(event) {
-        if (event.keyCode === $.ui.keyCode.TAB && $(this).autocomplete('instance').menu.active) {
-          event.preventDefault();
-        } else if (event.keyCode === $.ui.keyCode.ENTER) {
-          event.preventDefault();
-          $('#job-filter').submit();
-        }
-      })
-      .autocomplete({
-        minLength: 0,
-        source: function(request, response) {
-          // delegate back to autocomplete, but extract the last term
-          // response($.ui.autocomplete.filter(document.keywords, extractLast(request.term)));
-        },
-        focus: function() {
-          // prevent value inserted on focus
-          return false;
-        },
-        select: function(event, ui) {
-          var terms = split(this.value);
-
-          $('.close-icon').hide();
-
-          // remove the current input
-          terms.pop();
-
-          // add the selected item
-          terms.push(ui.item.value);
-
-          // add placeholder to get the comma-and-space at the end
-          terms.push('');
-
-          this.value = '';
-
-          addTag(ui.item.value);
-
-          return false;
-        }
-      });
-    </script>
+    <script src={% static "job/js/job_index.js" %}></script>
   </body>
 </html>

@@ -58,7 +58,8 @@ def alert_new_job(sender, **kwargs):
 cleaner = Cleaner(allow_tags=[''], javascript=True, style=True, remove_unknown_tags=False)
 
 def clean_field(field):
-    return html.fromstring(cleaner.clean_html(field)).text_content()
+    if not field.isspace():
+        return html.fromstring(cleaner.clean_html(field)).text_content()
 
 @receiver(pre_save, sender=Job)
 def clean_job_fields(sender, **kwargs):

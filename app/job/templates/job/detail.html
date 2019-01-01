@@ -117,17 +117,6 @@
 
   {% include 'shared/current_profile.html' %}
 
-  <script>
-    $(function() {
-        var converter = new showdown.Converter({
-          simplifiedAutoLink: true
-        });
-
-        description_html = converter.makeHtml($("#job_description").text());
-        $("#job_description").replaceWith(description_html);
-        $("#job_description").show();
-    });
-  </script>
-
-  <script src="{% static "v2/js/showdown.js" %}"></script>
+  <script src={% static "job/js/job_detail.js" %}></script>
+  <script src={% static "v2/js/showdown.js" %}></script>
 </html>

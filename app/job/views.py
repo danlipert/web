@@ -1,6 +1,8 @@
 import datetime
 import logging
+import json
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import Http404
@@ -24,16 +26,51 @@ JOB_FILTERS = ['annual_pay', 'full_time', 'internship', 'contractor', 'date_post
 
 PAGE_LIMIT = 25
 
+AVAILABLE_SKILLS = json.dumps([
+    "ActionScript",
+    "AppleScript",
+    "Asp",
+    "BASIC",
+    "C",
+    "C++",
+    "Clojure",
+    "COBOL",
+    "ColdFusion",
+    "Erlang",
+    "Fortran",
+    "Go",
+    "Groovy",
+    "Haskell",
+    "Java",
+    "JavaScript",
+    "Lisp",
+    "Perl",
+    "PHP",
+    "Python",
+    "Ruby",
+    "Rust",
+    "Scala",
+    "Scheme",
+    "Solidity"])
+
+
 def jobs(request):
     limit = request.GET.get('limit', PAGE_LIMIT)
     page = request.GET.get('page', 1)
     sort = request.GET.get('sort_option', '-created_on')
     date_posted = request.GET.get('date_posted', '30_days')
     annual_pay = request.GET.get('annual_pay', "Any")
-    full_time = request.GET.get('full_time', True)
-    part_time = request.GET.get('part_time', True)
-    contractor = request.GET.get('contractor', True)
-    internship = request.GET.get('internship', True)
+
+    if any([p in request.GET for p in ['full_time', 'part_time', 'contractor', 'internship']]):
+        job_type_default = False
+    else:
+        job_type_default = True
+
+    full_time = request.GET.get('full_time', job_type_default)
+    part_time = request.GET.get('part_time', job_type_default)
+    contractor = request.GET.get('contractor', job_type_default)
+    internship = request.GET.get('internship', job_type_default)
+
     search = request.GET.get('search', '')
 
     filters = {'created_on__gt': datetime.datetime.now() - DATE_MAP[date_posted],
@@ -75,7 +112,7 @@ def jobs(request):
         'search': search,
         'page_limit': PAGE_LIMIT
     }
-    return TemplateResponse(request, 'job/indexv2.html', params)
+    return TemplateResponse(request, 'job/index.html', params)
 
 
 @csrf_exempt
@@ -88,7 +125,7 @@ def job_details(request, job_id, job_slug):
         raise Http404
 
     params = {
-        'active': job.active,
+        'active': 'jobs_detail',
         'job': job,
         'title': job.title,
         'description': job.description,
@@ -124,12 +161,19 @@ def job_new(request):
             'location': request.POST.get('location')
         }
 
+        # fix autocomplete js
+        if job_kwargs['skills'][-1].isspace():
+            job_kwargs['skills'].pop()
+
         job = Job.objects.create(**job_kwargs)
 
         return redirect(reverse('job:details', args=(job.pk, job.slug)))
 
     params = {
-        'github_profile': profile.github_url
+        'github_profile': profile.github_url,
+        'job_posting_eth_fee': settings.JOB_POSTING_ETH_FEE,
+        'job_posting_eth_address': settings.JOB_POSTING_ETH_ADDRESS,
+        'available_skills': AVAILABLE_SKILLS
     }
 
     return TemplateResponse(request, 'job/new.html', params)
