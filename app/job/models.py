@@ -47,11 +47,12 @@ class Job(SuperModel):
 @receiver(post_save, sender=Job)
 def alert_new_job(sender, **kwargs):
     """Alert when a new Job is created."""
-    if(kwargs.get('created') is True):
-        job_alert(kwargs.get('instance'))
-    elif(kwargs.get('instance').active is True):
-        job_active_alert(kwargs.get('instance'))
+    instance = kwargs.get('instance')
 
+    if kwargs.get('created') and instance:
+        job_alert(instance)
+    elif instance and instance.active:
+        job_active_alert(instance)
 
 # This is not foolproof - the best thing to do is make sure all template tags
 # are properly coded and no content is loaded dynamically via JS

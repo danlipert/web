@@ -79,9 +79,12 @@ def jobs(request):
     if annual_pay != "Any":
         filters['annual_pay__gt'] = int(annual_pay)
 
+    (full_time and not part_time) and (filters.update({'full_time': True}))
+    (part_time and not full_time) and (filters.update({'part_time': False}))
+
     if full_time and not part_time:
         filters['full_time'] = True
-    if part_time and not full_time:
+    elif part_time and not full_time:
         filters['full_time'] = False
 
     if not contractor:
