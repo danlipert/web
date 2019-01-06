@@ -50,7 +50,7 @@
             </div>
             <div id="primary_form" class="col-lg-7 col-sm-12">
               <h1 class="text-center title">{% trans "Create a Job Posting" %}</h1>
-              <form id="submitJob" method="post" action="/jobs/new/" class="submit_bounty_form px-5 pt-5">{% csrf_token %}
+              <form id="submitJob" method="post" action="/jobs/new/" class="submit_bounty_form px-5 pt-5 needs-validation">{% csrf_token %}
                 <div id="about-section" class="pt-2">
                   <div id="job-details" class="mt-4">
                     <label class="form__label mb-0 mt-3" for="title">{% trans "Job Title" %}</label>
@@ -79,22 +79,18 @@
                     <label class="form__label mb-0 mt-4 w-100" for="location">{% trans "Location" %}</label>
                     <input name='location' id="location" class="form__input pb-2 pt-2" type="text" required/>
                     <label class="form__label mb-0 mt-4 w-100" for="annual_pay">{% trans "Annual Pay" %}</label>
-                    <input name='annual_pay' id="annual_pay" class="form__input pb-2 pt-2" type="number" required/>
+                    <input name='annual_pay' id="annual_pay" class="form__input pb-2 pt-2" type="number"/>
                     <label class="form__label mb-0 mt-3 w-100" for="skills">{% trans "Skills" %}</label>
-                    <input name='skills' id="skills" class="form__input pb-2 pt-2" type="text" placeholder="EX: Python, Solidity, Web3" required/>
+                    <input name='skills' id="skills" class="form__input pb-2 pt-2" type="text" placeholder="EX: Python, Solidity, Web3"/>
                     <label class="form__label mb-0 mt-3" for="company">{% trans "Company" %}</label>
                     <input name='company' id="company" class="form__input  pb-2 pt-2" type="text" required/>
                     <label class="form__label mb-0 mt-4 w-100" for="apply_location">{% trans "Apply Location" %}</label>
-                    <input name='apply_location' id="apply_location" class="form__input pb-2 pt-2" type="text" required/>
+                    <input name='apply_location' id="apply_location" class="form__input pb-2 pt-2" type="text" placeholder="jobs@example.com or www.example.com/careers" required/>
                     <label class="form__label mb-0 mt-3" for="github_profile">Github {% trans "Profile" %}</label>
                     <input name='github_profile' id="github_profile" class="form__input  pb-2 pt-2" type="text" value="{{ github_profile }}" required/>
                     <label class="form__label mt-3" for="description">{% trans "Description" %}</label>
-                    <textarea name="description" class="form__input" id="description"></textarea>
+                    <textarea name="description" class="form__input" id="description" required></textarea>
                     <input type="hidden" name="paid_txid" id="paid_txid"/>
-                  </div>
-                  <div id="issue-details-edit" class="mt-2">
-                    <label class="form__label" for="keywords">{% trans "Keywords" %}</label>
-                    <input name='keywords' id='keywords' class="form__input" type="text" value="{{keywords}}" />
                   </div>
                   <hr class="mt-4">
                 </div>

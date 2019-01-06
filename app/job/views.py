@@ -1,10 +1,12 @@
 import datetime
-import logging
 import json
+import logging
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
+from django.core.validators import validate_email
 from django.http import Http404
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
@@ -127,14 +129,23 @@ def job_details(request, job_id, job_slug):
     except Job.DoesNotExist:
         raise Http404
 
+    apply_location = None
+
+    try:
+        validate_email(job.apply_location)
+        apply_location = 'mailto:{}'.format(job.apply_location)
+    except ValidationError:
+        apply_location = 'http://{}'.format(job.apply_location) if job.apply_location.startswith('http') == False else job.apply_location
+
     params = {
         'active': 'jobs_detail',
-        'job': job,
+        'apply_location': apply_location,
         'title': job.title,
         'description': job.description,
         'company': job.company,
         'experience': job.skills,
         'created': job.created_on,
+        'github_profile': job.github_profile,
         'owner_profile_email': job.owner_profile.email,
         'owner_profile_handle': job.owner_profile.handle
     }
@@ -173,6 +184,7 @@ def job_new(request):
         return redirect(reverse('job:details', args=(job.pk, job.slug)))
 
     params = {
+        'active': 'jobs_new',
         'github_profile': profile.github_url,
         'job_posting_eth_fee': settings.JOB_POSTING_ETH_FEE,
         'job_posting_eth_address': settings.JOB_POSTING_ETH_ADDRESS,

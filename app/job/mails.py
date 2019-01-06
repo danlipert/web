@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 
 from marketing.mails import send_mail, setup_lang
 
+
 def job_alert(job):
     to_email = settings.CONTACT_EMAIL
     from_email = settings.SERVER_EMAIL

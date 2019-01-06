@@ -1,15 +1,18 @@
 function submitJobETH(jobPostingEthAddress, jobPostingEthFee) {
-  var send = web3.eth.sendTransaction(
-    {
-      to: jobPostingEthAddress,
-      value: web3.toWei(jobPostingEthFee, "ether")
-    },
-    function(err, transactionHash) {
-      if (!err) {
-        $("#paid_txid").val(transactionHash);
-        $('#submitJob').submit();
-      }
-  });
+  if ($('#submitJob').get(0).reportValidity() === true)
+  {
+    var send = web3.eth.sendTransaction(
+      {
+        to: jobPostingEthAddress,
+        value: web3.toWei(jobPostingEthFee, "ether")
+      },
+      function(err, transactionHash) {
+        if (!err) {
+          $("#paid_txid").val(transactionHash);
+          $('#submitJob').submit();
+        }
+    });
+  }
 };
 
 var simplemde = new SimpleMDE({

@@ -1,14 +1,14 @@
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.db.models.signals import post_save, pre_save
-from django.contrib.postgres.fields import ArrayField
 from django.dispatch import receiver
+
 from django_extensions.db.fields import AutoSlugField
-
-from lxml.html.clean import Cleaner
-from lxml import html
-
 from economy.models import SuperModel
-from .mails import job_alert, job_active_alert
+from lxml import html
+from lxml.html.clean import Cleaner
+
+from .mails import job_active_alert, job_alert
 
 
 class JobQuerySet(models.QuerySet):
@@ -32,7 +32,6 @@ class Job(SuperModel):
     github_profile = models.CharField(max_length=255, default='', blank=True)
     expiry_date = models.DateTimeField()
     apply_location = models.CharField(max_length=400)
-    amount = models.DecimalField(default=1, decimal_places=4, max_digits=50)
     paid_txid = models.CharField(max_length=255, default='', blank=True)
     slug = AutoSlugField(populate_from='title')
     full_time = models.BooleanField(default=True)
@@ -59,7 +58,7 @@ def alert_new_job(sender, **kwargs):
 cleaner = Cleaner(allow_tags=[''], javascript=True, style=True, remove_unknown_tags=False)
 
 def clean_field(field):
-    if not field.isspace():
+    if field and not field.isspace():
         return html.fromstring(cleaner.clean_html(field)).text_content()
 
 @receiver(pre_save, sender=Job)

@@ -19,9 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 from django.urls import path, re_path
 
-from job.views import (
-    job_details, job_new, jobs
-)
+from job.views import job_details, job_new, jobs
 
 app_name = 'job'
 urlpatterns = [
