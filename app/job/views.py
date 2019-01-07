@@ -184,6 +184,7 @@ def job_new(request):
         return redirect(reverse('job:details', args=(job.pk, job.slug)))
 
     params = {
+        'title': _('Create a Job Posting'),
         'active': 'jobs_new',
         'github_profile': profile.github_url,
         'job_posting_eth_fee': settings.JOB_POSTING_ETH_FEE,
